@@ -157,7 +157,6 @@ class Issue(CompletableGithubObject):
         self._url: Attribute[str] = NotSet
         self._user: Attribute[NamedUser] = NotSet
         self._type: Attribute[IssueType] = NotSet
-        
 
     def __repr__(self) -> str:
         return self.get__repr__({"number": self._number.value, "title": self._title.value})

@@ -38,9 +38,9 @@
 from __future__ import annotations
 
 from datetime import datetime
-
 from typing import Any
 import urllib.parse
+
 from github.GithubObject import Attribute, CompletableGithubObject, NotSet, Opt, is_optional
 
 
