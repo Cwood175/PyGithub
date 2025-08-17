@@ -60,14 +60,14 @@ class IssueType(CompletableGithubObject):
         self._created_at: Attribute[datetime] = NotSet
         self._updated_at: Attribute[datetime] = NotSet
         self._is_enabled: Attribute[bool] = NotSet
-        
+
     def __repr__(self) -> str:
         return self.get__repr__({"name": self._name.value})
-    
+
     @property
     def _identity(self) -> str:
         return urllib.parse.quote(self.name)
-    
+
     @property
     def id(self) -> int:
         self._completeIfNotSet(self._id)
