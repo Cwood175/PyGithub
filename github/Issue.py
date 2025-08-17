@@ -70,8 +70,8 @@ import github.GithubObject
 import github.IssueComment
 import github.IssueEvent
 import github.IssuePullRequest
-import github.Label
 import github.IssueType
+import github.Label
 import github.Milestone
 import github.NamedUser
 import github.Organization
@@ -97,8 +97,8 @@ if TYPE_CHECKING:
     from github.IssueComment import IssueComment
     from github.IssueEvent import IssueEvent
     from github.IssuePullRequest import IssuePullRequest
-    from github.Label import Label
     from github.IssueType import IssueType
+    from github.Label import Label
     from github.Milestone import Milestone
     from github.NamedUser import NamedUser
     from github.PullRequest import PullRequest
@@ -157,7 +157,6 @@ class Issue(CompletableGithubObject):
         self._url: Attribute[str] = NotSet
         self._user: Attribute[NamedUser] = NotSet
         self._type: Attribute[IssueType] = NotSet
-        
 
     def __repr__(self) -> str:
         return self.get__repr__({"number": self._number.value, "title": self._title.value})
@@ -298,7 +297,7 @@ class Issue(CompletableGithubObject):
             # The repository was not set automatically, so it must be looked up by url.
             repo_url = "/".join(self.url.split("/")[:-2])
             self._repository = github.GithubObject._ValuedAttribute(
-                github.Repository.Repository(self._requester, self._headers, {"url": repo_url}, completed=False)
+                github.Repository.Repository(self._requester, self._headers, {"url": repo_url}, completed=False),
             )
         return self._repository.value
 
@@ -346,12 +345,11 @@ class Issue(CompletableGithubObject):
     def user(self) -> NamedUser:
         self._completeIfNotSet(self._user)
         return self._user.value
-    
+
     @property
     def type(self) -> IssueType:
         self._completeIfNotSet(self._type)
         return self._type.value
-    
 
     def as_pull_request(self) -> PullRequest:
         """
@@ -579,9 +577,7 @@ class Issue(CompletableGithubObject):
         if isinstance(sub_issue, Issue):
             sub_issue_id = sub_issue.id
 
-        post_parameters: dict[str, Any] = {
-            "sub_issue_id": sub_issue_id,
-        }
+        post_parameters: dict[str, Any] = {"sub_issue_id": sub_issue_id}
         headers, data = self._requester.requestJsonAndCheck(
             "POST",
             f"{self.url}/sub_issues",
@@ -602,9 +598,7 @@ class Issue(CompletableGithubObject):
         if isinstance(sub_issue, Issue):
             sub_issue_id = sub_issue.id
 
-        post_parameters: dict[str, Any] = {
-            "sub_issue_id": sub_issue_id,
-        }
+        post_parameters: dict[str, Any] = {"sub_issue_id": sub_issue_id}
         headers, data = self._requester.requestJsonAndCheck(
             "DELETE",
             f"{self.url}/sub_issue",
@@ -613,7 +607,11 @@ class Issue(CompletableGithubObject):
         )
         return SubIssue(self._requester, headers, data, completed=True)
 
-    def prioritize_sub_issue(self, sub_issue: int | Issue, after_sub_issue: int | Issue | None) -> SubIssue:
+    def prioritize_sub_issue(
+        self,
+        sub_issue: int | Issue,
+        after_sub_issue: int | Issue | None,
+    ) -> SubIssue:
         """
         :calls: `PATCH /repos/{owner}/{repo}/issues/{number}/sub_issues/priority <https://docs.github.com/en/rest/issues/sub-issues>`_
         :param sub_issue: int (sub-issue ID) or Issue object. Note: Use sub_issue.id, not sub_issue.number
@@ -644,9 +642,7 @@ class Issue(CompletableGithubObject):
         :calls: `POST /repos/{owner}/{repo}/issues/{number}/reactions <https://docs.github.com/en/rest/reference/reactions>`_
         """
         assert isinstance(reaction_type, str), reaction_type
-        post_parameters = {
-            "content": reaction_type,
-        }
+        post_parameters = {"content": reaction_type}
         headers, data = self._requester.requestJsonAndCheck(
             "POST",
             f"{self.url}/reactions",
