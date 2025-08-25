@@ -4833,6 +4833,7 @@ class RepositorySearchResult(Repository):
     """
     This class represents RepositorySearchResult.
 
+
     The reference can be found here
     https://docs.github.com/en/rest/reference/search#search-repositories
 
