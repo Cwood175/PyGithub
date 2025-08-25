@@ -64,15 +64,16 @@ class SecretScanAlertInstance(NonCompletableGithubObject):
     @property
     def blob_sha(self) -> str:
         return self._blob_sha.value
-    
+
     @property
     def blob_url(self) -> str:
         return self._blob_url.value
-    
+
     @property
     def commit_sha(self) -> str:
         return self._commit_sha.value
-    
+
+
     @property
     def commit_url(self) -> str:
         return self._commit_url.value
@@ -116,3 +117,5 @@ class SecretScanAlertInstance(NonCompletableGithubObject):
             self._start_column = self._makeIntAttribute(attributes["start_column"])
         if "start_line" in attributes:
             self._start_line = self._makeIntAttribute(attributes["start_line"])
+
+

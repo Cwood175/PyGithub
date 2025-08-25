@@ -1096,7 +1096,7 @@ class Organization(CompletableGithubObject):
         :rtype: None`
         """
         assert isinstance(id, int), id
-        headers, data = self._requester.requestJsonAndCheck("DELETE", f"{self.url}/hooks/{id}")
+        self._requester.requestJsonAndCheck("DELETE", f"{self.url}/hooks/{id}")
 
     def edit(
         self,
@@ -1186,7 +1186,7 @@ class Organization(CompletableGithubObject):
         """
         assert isinstance(hook_id, int), hook_id
         assert isinstance(delivery_id, int), delivery_id
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "GET", f"{self.url}/hooks/{hook_id}/deliveries/{delivery_id}"
         )
         return github.HookDelivery.HookDelivery(self._requester, headers, data)
@@ -1624,7 +1624,7 @@ class Organization(CompletableGithubObject):
             f"{self.url}/dependabot/alerts",
             url_parameters,
         )
-    
+
     def get_codescan_alerts(
         self,
         tool_name: Opt[str] = NotSet,
@@ -1759,7 +1759,7 @@ class Organization(CompletableGithubObject):
         :rtype: :class:`github.OrganizationCustomProperty.OrganizationCustomProperty`
         """
         assert isinstance(property_name, str), property_name
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "GET", f"{self.url}/properties/schema/{urllib.parse.quote(property_name)}"
         )
         return github.OrganizationCustomProperty.OrganizationCustomProperty(
@@ -1778,7 +1778,7 @@ class Organization(CompletableGithubObject):
         assert isinstance(properties, list), properties
         assert all(isinstance(p, github.OrganizationCustomProperty.CustomProperty) for p in properties), properties
         patch_parameters = {"properties": [p.to_dict() for p in properties]}
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "PATCH", f"{self.url}/properties/schema", input=patch_parameters
         )
         return [
@@ -1800,7 +1800,7 @@ class Organization(CompletableGithubObject):
 
         post_parameters = property.to_dict()
         property_name = post_parameters.pop("property_name")
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "PUT", f"{self.url}/properties/schema/{property_name}", input=post_parameters
         )
         return github.OrganizationCustomProperty.OrganizationCustomProperty(
@@ -1815,7 +1815,6 @@ class Organization(CompletableGithubObject):
         """
         assert isinstance(property_name, str), property_name
         self._requester.requestJsonAndCheck("DELETE", f"{self.url}/properties/schema/{property_name}")
-
     def list_custom_property_values(
         self, repository_query: Opt[str] = NotSet
     ) -> PaginatedList[RepositoryCustomPropertyValues]:
@@ -1919,7 +1918,7 @@ class Organization(CompletableGithubObject):
             }
         )
 
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "POST",
             f"{self.url}/code-security/configurations",
             input=post_parameters,
@@ -1985,7 +1984,7 @@ class Organization(CompletableGithubObject):
             }
         )
 
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "PATCH", f"{self.url}/code-security/configurations/{id}", input=post_parameters
         )
         return github.CodeSecurityConfig.CodeSecurityConfig(self._requester, headers, data)
@@ -1997,7 +1996,7 @@ class Organization(CompletableGithubObject):
         :rtype: None`
         """
         assert isinstance(id, int), id
-        headers, data = self._requester.requestJsonAndCheck("DELETE", f"{self.url}/code-security/configurations/{id}")
+        self._requester.requestJsonAndCheck("DELETE", f"{self.url}/code-security/configurations/{id}")
 
     def get_code_security_config(self, id: int) -> CodeSecurityConfig:
         """
@@ -2017,7 +2016,7 @@ class Organization(CompletableGithubObject):
         assert isinstance(id, int), id
         assert is_optional(default_for_new_repos, str), default_for_new_repos
         put_parameters = NotSet.remove_unset_items({"default_for_new_repos": default_for_new_repos})
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "PUT", f"{self.url}/code-security/configurations/{id}/defaults", input=put_parameters
         )
 
@@ -2049,7 +2048,7 @@ class Organization(CompletableGithubObject):
             }
         )
 
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "POST",
             f"/orgs/{self.login}/code-security/configurations/{id}/attach",
             input=post_parameters,
@@ -2066,7 +2065,7 @@ class Organization(CompletableGithubObject):
                 "selected_repository_ids": selected_repository_ids,
             }
         )
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "DELETE",
             f"/orgs/{self.login}/code-security/configurations/detach",
             input=delete_parameters,
@@ -2133,7 +2132,7 @@ class Organization(CompletableGithubObject):
                 "work_folder": work_folder,
             }
         )
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "POST",
             f"{self.url}/actions/runners/generate-jitconfig",
             input=body_parameters,
@@ -2145,7 +2144,7 @@ class Organization(CompletableGithubObject):
         """
         :calls: `POST /orgs/{org}/actions/runners/registration-token <https://docs.github.com/en/rest/actions/self-hosted-runners#create-a-registration-token-for-an-organization>`_
         """
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "POST",
             f"{self.url}/actions/runners/registration-token",
         )
@@ -2155,7 +2154,7 @@ class Organization(CompletableGithubObject):
         """
         :calls: `POST /orgs/{org}/actions/runners/remove-token <https://docs.github.com/en/rest/actions/self-hosted-runners#create-a-remove-token-for-an-organization>`_
         """
-        headers, data = self._requester.requestJsonAndCheck(
+        self._requester.requestJsonAndCheck(
             "POST",
             f"{self.url}/actions/runners/remove-token",
         )
