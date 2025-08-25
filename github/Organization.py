@@ -929,7 +929,9 @@ class Organization(CompletableGithubObject):
             attributes={
                 "name": secret_name,
                 "visibility": visibility,
-                "selected_repositories_url": f"{self.url}/{secret_type}/secrets/{urllib.parse.quote(secret_name)}/repositories",
+                "selected_repositories_url": (
+                    f"{self.url}/{secret_type}/secrets/{urllib.parse.quote(secret_name)}/repositories"
+                ),
                 "url": f"{self.url}/{secret_type}/secrets/{urllib.parse.quote(secret_name)}",
             },
             completed=False,
@@ -1597,7 +1599,17 @@ class Organization(CompletableGithubObject):
         """
         allowed_states = ["auto_dismissed", "dismissed", "fixed", "open"]
         allowed_severities = ["low", "medium", "high", "critical"]
-        allowed_ecosystems = ["composer", "go", "maven", "npm", "nuget", "pip", "pub", "rubygems", "rust"]
+        allowed_ecosystems = [
+            "composer",
+            "go",
+            "maven",
+            "npm",
+            "nuget",
+            "pip",
+            "pub",
+            "rubygems",
+            "rust",
+        ]
         allowed_scopes = ["development", "runtime"]
         allowed_sorts = ["created", "updated"]
         allowed_directions = ["asc", "desc"]
@@ -1624,7 +1636,7 @@ class Organization(CompletableGithubObject):
             f"{self.url}/dependabot/alerts",
             url_parameters,
         )
-    
+
     def get_codescan_alerts(
         self,
         tool_name: Opt[str] = NotSet,
@@ -1634,7 +1646,7 @@ class Organization(CompletableGithubObject):
         sort: Opt[str] = NotSet,
         direction: Opt[str] = NotSet,
         state: Opt[str] = NotSet,
-        severity: Opt[str] = NotSet
+        severity: Opt[str] = NotSet,
     ) -> PaginatedList[OrganizationCodeScanAlert]:
         """
         :calls: `GET /orgs/{org}/code-scanning/alerts <https://docs.github.com/en/rest/code-scanning/code-scanning#list-code-scanning-alerts-for-an-organization>`_
@@ -1651,10 +1663,20 @@ class Organization(CompletableGithubObject):
         allowed_sorts = ["created", "updated"]
         allowed_directions = ["asc", "desc"]
         allowed_states = ["open", "closed", "dismissed", "fixed"]
-        allowed_severities = ["critical", "high", "medium", "low", "warning", "note", "error"]
+        allowed_severities = [
+            "critical",
+            "high",
+            "medium",
+            "low",
+            "warning",
+            "note",
+            "error",
+        ]
         assert is_optional(tool_name, str), tool_name
         assert is_optional(tool_guid, str), tool_guid
-        assert tool_name is NotSet or tool_guid is NotSet, "You can specify the tool by using either tool_guid or tool_name, but not both."
+        assert tool_name is NotSet or tool_guid is NotSet, (
+            "You can specify the tool by using either tool_guid or tool_name, but not both."
+        )
         assert is_optional(ref, str), ref
         assert is_optional(pr, int), pr
         assert sort in allowed_sorts + [NotSet], f"Sort can be one of {', '.join(allowed_sorts)}"
@@ -1670,7 +1692,7 @@ class Organization(CompletableGithubObject):
                 "sort": sort,
                 "direction": direction,
                 "state": state,
-                "severity": severity
+                "severity": severity,
             }
         )
         return PaginatedList(
@@ -1679,7 +1701,7 @@ class Organization(CompletableGithubObject):
             f"{self.url}/code-scanning/alerts",
             url_parameters,
         )
-    
+
     def get_secret_scanning_alerts(
         self,
         state: Opt[str] = NotSet,
@@ -1690,7 +1712,7 @@ class Organization(CompletableGithubObject):
         validity: Opt[str] = NotSet,
         is_publicly_leaked: Opt[bool] = NotSet,
         is_multi_repo: Opt[bool] = NotSet,
-        hide_secret: Opt[bool] = NotSet
+        hide_secret: Opt[bool] = NotSet,
     ) -> PaginatedList[OrganizationSecretScanAlert]:
         """
         :calls: `GET /orgs/{org}/secret-scanning/alerts <https://docs.github.com/en/rest/secret-scanning/secret-scanning#list-secret-scanning-alerts-for-an-organization>`_
@@ -1707,12 +1729,21 @@ class Organization(CompletableGithubObject):
         """
         allowed_states = ["open", "resolved"]
         allowed_secret_types = ["user", "push_protection", "partner"]
-        allowed_resolutions = ["false_positive", "wont_fix", "revoked", "pattern_edited", "pattern_deleted", "used_in_tests"]
+        allowed_resolutions = [
+            "false_positive",
+            "wont_fix",
+            "revoked",
+            "pattern_edited",
+            "pattern_deleted",
+            "used_in_tests",
+        ]
         allowed_sorts = ["created", "updated"]
         allowed_directions = ["asc", "desc"]
         allowed_validities = ["active", "inactive", "unknown"]
         assert state in allowed_states + [NotSet], f"State can be one of {', '.join(allowed_states)}"
-        assert secret_type in allowed_secret_types + [NotSet], f"Severity can be one of {', '.join(allowed_secret_types)}"
+        assert secret_type in allowed_secret_types + [NotSet], (
+            f"Severity can be one of {', '.join(allowed_secret_types)}"
+        )
         assert resolution in allowed_resolutions + [NotSet], f"Ecosystem can be one of {', '.join(allowed_resolutions)}"
         assert sort in allowed_sorts + [NotSet], f"Sort can be one of {', '.join(allowed_sorts)}"
         assert direction in allowed_directions + [NotSet], f"Direction can be one of {', '.join(allowed_directions)}"
@@ -1997,7 +2028,7 @@ class Organization(CompletableGithubObject):
         :rtype: None`
         """
         assert isinstance(id, int), id
-        headers, data = self._requester.requestJsonAndCheck("DELETE", f"{self.url}/code-security/configurations/{id}")
+        self._requester.requestJsonAndCheck("DELETE", f"{self.url}/code-security/configurations/{id}")
 
     def get_code_security_config(self, id: int) -> CodeSecurityConfig:
         """

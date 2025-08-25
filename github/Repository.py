@@ -1815,7 +1815,7 @@ class Repository(CompletableGithubObject):
         description: str,
         severity_or_cvss_vector_string: str,
         cve_id: str | None = None,
-        vulnerabilities: Iterable[github.AdvisoryVulnerability.AdvisoryVulnerabilityInput] | None = None,
+        vulnerabilities: (Iterable[github.AdvisoryVulnerability.AdvisoryVulnerabilityInput] | None) = None,
         cwe_ids: Iterable[str] | None = None,
         credits: Iterable[github.AdvisoryCredit.AdvisoryCredit] | None = None,
     ) -> github.RepositoryAdvisory.RepositoryAdvisory:
@@ -1847,7 +1847,7 @@ class Repository(CompletableGithubObject):
         description: str,
         severity_or_cvss_vector_string: str,
         cve_id: str | None = None,
-        vulnerabilities: Iterable[github.AdvisoryVulnerability.AdvisoryVulnerabilityInput] | None = None,
+        vulnerabilities: (Iterable[github.AdvisoryVulnerability.AdvisoryVulnerabilityInput] | None) = None,
         cwe_ids: Iterable[str] | None = None,
         credits: Iterable[github.AdvisoryCredit.AdvisoryCredit] | None = None,
     ) -> github.RepositoryAdvisory.RepositoryAdvisory:
@@ -1879,7 +1879,7 @@ class Repository(CompletableGithubObject):
         description: str,
         severity_or_cvss_vector_string: str,
         cve_id: str | None,
-        vulnerabilities: Iterable[github.AdvisoryVulnerability.AdvisoryVulnerabilityInput] | None,
+        vulnerabilities: (Iterable[github.AdvisoryVulnerability.AdvisoryVulnerabilityInput] | None),
         cwe_ids: Iterable[str] | None,
         credits: Iterable[github.AdvisoryCredit.AdvisoryCredit] | None,
         private_vulnerability_reporting: bool,
@@ -1930,7 +1930,11 @@ class Repository(CompletableGithubObject):
             )
         return github.RepositoryAdvisory.RepositoryAdvisory(self._requester, headers, data)
 
-    def create_repository_dispatch(self, event_type: str, client_payload: Opt[dict[str, Any]] = NotSet) -> bool:
+    def create_repository_dispatch(
+        self,
+        event_type: str,
+        client_payload: Opt[dict[str, Any]] = NotSet,
+    ) -> bool:
         """
         :calls: POST /repos/{owner}/{repo}/dispatches <https://docs.github.com/en/rest/repos#create-a-repository-dispatch-event>
         :param event_type: string
@@ -1955,7 +1959,10 @@ class Repository(CompletableGithubObject):
         """
         assert isinstance(secret_name, str), secret_name
         assert isinstance(unencrypted_value, str), unencrypted_value
-        assert secret_type in ["actions", "dependabot"], "secret_type should be actions or dependabot"
+        assert secret_type in [
+            "actions",
+            "dependabot",
+        ], "secret_type should be actions or dependabot"
 
         secret_name = urllib.parse.quote(secret_name, safe="")
         public_key = self.get_public_key(secret_type=secret_type)
@@ -1965,7 +1972,9 @@ class Repository(CompletableGithubObject):
             "encrypted_value": payload,
         }
         self._requester.requestJsonAndCheck(
-            "PUT", f"{self.url}/{secret_type}/secrets/{secret_name}", input=put_parameters
+            "PUT",
+            f"{self.url}/{secret_type}/secrets/{secret_name}",
+            input=put_parameters,
         )
         return github.Secret.Secret(
             requester=self._requester,
@@ -2180,15 +2189,28 @@ class Repository(CompletableGithubObject):
         assert is_optional(delete_branch_on_merge, bool), delete_branch_on_merge
         assert is_optional(allow_update_branch, bool), allow_update_branch
         assert is_optional(use_squash_pr_title_as_default, bool), use_squash_pr_title_as_default
-        assert squash_merge_commit_title in ["PR_TITLE", "COMMIT_OR_PR_TITLE", NotSet], squash_merge_commit_title
+        assert squash_merge_commit_title in [
+            "PR_TITLE",
+            "COMMIT_OR_PR_TITLE",
+            NotSet,
+        ], squash_merge_commit_title
         assert squash_merge_commit_message in [
             "PR_BODY",
             "COMMIT_MESSAGES",
             "BLANK",
             NotSet,
         ], squash_merge_commit_message
-        assert merge_commit_title in ["PR_TITLE", "MERGE_MESSAGE", NotSet], merge_commit_title
-        assert merge_commit_message in ["PR_TITLE", "PR_BODY", "BLANK", NotSet], merge_commit_message
+        assert merge_commit_title in [
+            "PR_TITLE",
+            "MERGE_MESSAGE",
+            NotSet,
+        ], merge_commit_title
+        assert merge_commit_message in [
+            "PR_TITLE",
+            "PR_BODY",
+            "BLANK",
+            NotSet,
+        ], merge_commit_message
         assert is_optional(archived, bool), archived
         assert is_optional(allow_forking, bool), allow_forking
         assert is_optional(web_commit_signoff_required, bool), web_commit_signoff_required
@@ -2564,7 +2586,10 @@ class Repository(CompletableGithubObject):
             "number": number,
         }
         return self._requester.graphql_query_class(
-            query, variables, ["repository", "discussion"], github.RepositoryDiscussion.RepositoryDiscussion
+            query,
+            variables,
+            ["repository", "discussion"],
+            github.RepositoryDiscussion.RepositoryDiscussion,
         )
 
     def get_discussions(
@@ -4011,9 +4036,9 @@ class Repository(CompletableGithubObject):
         :param runner: int or :class:`github.SelfHostedActionsRunner.SelfHostedActionsRunner`
         :rtype: bool
         """
-        assert isinstance(runner, github.SelfHostedActionsRunner.SelfHostedActionsRunner) or isinstance(
-            runner, int
-        ), runner
+        assert isinstance(runner, github.SelfHostedActionsRunner.SelfHostedActionsRunner) or isinstance(runner, int), (
+            runner
+        )
 
         if isinstance(runner, github.SelfHostedActionsRunner.SelfHostedActionsRunner):
             runner = runner.id
@@ -4031,7 +4056,8 @@ class Repository(CompletableGithubObject):
         assert is_autolink or isinstance(autolink, int), autolink
 
         status, _, _ = self._requester.requestJson(
-            "DELETE", f"{self.url}/autolinks/{autolink.id if is_autolink else autolink}"  # type: ignore
+            "DELETE",
+            f"{self.url}/autolinks/{autolink.id if is_autolink else autolink}",  # type: ignore
         )
         return status == 204
 
@@ -4232,7 +4258,7 @@ class Repository(CompletableGithubObject):
         sort: Opt[str] = NotSet,
         direction: Opt[str] = NotSet,
         state: Opt[str] = NotSet,
-        severity: Opt[str] = NotSet
+        severity: Opt[str] = NotSet,
     ) -> PaginatedList[CodeScanAlert]:
         """
         :calls: `GET https://api.github.com/repos/{owner}/{repo}/code-scanning/alerts <https://docs.github.com/en/rest/reference/code-scanning#list-code-scanning-alerts-for-a-repository>`_
@@ -4252,7 +4278,9 @@ class Repository(CompletableGithubObject):
         allowed_severities = ["critical", "high", "medium", "low", "warning", "note", "error"]
         assert is_optional(tool_name, str), tool_name
         assert is_optional(tool_guid, str), tool_guid
-        assert tool_name is NotSet or tool_guid is NotSet, "You can specify the tool by using either tool_guid or tool_name, but not both."
+        assert tool_name is NotSet or tool_guid is NotSet, (
+            "You can specify the tool by using either tool_guid or tool_name, but not both."
+        )
         assert is_optional(ref, str), ref
         assert is_optional(pr, int), pr
         assert sort in allowed_sorts + [NotSet], f"Sort can be one of {', '.join(allowed_sorts)}"
@@ -4268,7 +4296,7 @@ class Repository(CompletableGithubObject):
                 "sort": sort,
                 "direction": direction,
                 "state": state,
-                "severity": severity
+                "severity": severity,
             }
         )
         return PaginatedList(
@@ -4277,7 +4305,7 @@ class Repository(CompletableGithubObject):
             f"{self.url}/code-scanning/alerts",
             url_parameters,
         )
-    
+
     def get_codescan_alert(self, number: int) -> CodeScanAlert:
         """
         :calls: `GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number} <https://docs.github.com/en/rest/code-scanning/code-scanning#get-a-code-scanning-alert>`_
@@ -4298,7 +4326,7 @@ class Repository(CompletableGithubObject):
         validity: Opt[str] = NotSet,
         is_publicly_leaked: Opt[bool] = NotSet,
         is_multi_repo: Opt[bool] = NotSet,
-        hide_secret: Opt[bool] = NotSet
+        hide_secret: Opt[bool] = NotSet,
     ) -> PaginatedList[SecretScanAlert]:
         """
         :calls: `GET /repos/{owner}/{repo}/secret-scanning/alerts <https://docs.github.com/en/rest/secret-scanning/secret-scanning#list-secret-scanning-alerts-for-a-repository>`_
@@ -4315,12 +4343,21 @@ class Repository(CompletableGithubObject):
         """
         allowed_states = ["open", "resolved"]
         allowed_secret_types = ["user", "push_protection", "partner"]
-        allowed_resolutions = ["false_positive", "wont_fix", "revoked", "pattern_edited", "pattern_deleted", "used_in_tests"]
+        allowed_resolutions = [
+            "false_positive",
+            "wont_fix",
+            "revoked",
+            "pattern_edited",
+            "pattern_deleted",
+            "used_in_tests",
+        ]
         allowed_sorts = ["created", "updated"]
         allowed_directions = ["asc", "desc"]
         allowed_validities = ["active", "inactive", "unknown"]
         assert state in allowed_states + [NotSet], f"State can be one of {', '.join(allowed_states)}"
-        assert secret_type in allowed_secret_types + [NotSet], f"Severity can be one of {', '.join(allowed_secret_types)}"
+        assert secret_type in allowed_secret_types + [NotSet], (
+            f"Severity can be one of {', '.join(allowed_secret_types)}"
+        )
         assert resolution in allowed_resolutions + [NotSet], f"Ecosystem can be one of {', '.join(allowed_resolutions)}"
         assert sort in allowed_sorts + [NotSet], f"Sort can be one of {', '.join(allowed_sorts)}"
         assert direction in allowed_directions + [NotSet], f"Direction can be one of {', '.join(allowed_directions)}"
@@ -4347,7 +4384,7 @@ class Repository(CompletableGithubObject):
             f"{self.url}/secret-scanning/alerts",
             url_parameters,
         )
-    
+
     def get_secret_scanning_alert(self, number: int, hide_secret: Opt[bool] = NotSet) -> SecretScanAlert:
         """
         :calls: `GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number} <https://docs.github.com/en/rest/secret-scanning/secret-scanning#get-a-secret-scanning-alert>`_
@@ -4362,7 +4399,11 @@ class Repository(CompletableGithubObject):
                 "hide_secret": hide_secret,
             }
         )
-        headers, data = self._requester.requestJsonAndCheck("GET", f"{self.url}/secret-scanning/alerts/{number}", parameters=query_parameters)
+        headers, data = self._requester.requestJsonAndCheck(
+            "GET",
+            f"{self.url}/secret-scanning/alerts/{number}",
+            parameters=query_parameters,
+        )
         return github.SecretScanAlert.SecretScanAlert(self._requester, headers, data)
 
     def get_environments(self) -> PaginatedList[Environment]:
@@ -4429,7 +4470,7 @@ class Repository(CompletableGithubObject):
             "wait_timer": wait_timer,
             "reviewers": [reviewer._asdict() for reviewer in reviewers],
             "prevent_self_review": prevent_self_review,
-            "deployment_branch_policy": deployment_branch_policy._asdict() if deployment_branch_policy else None,
+            "deployment_branch_policy": (deployment_branch_policy._asdict() if deployment_branch_policy else None),
         }
 
         headers, data = self._requester.requestJsonAndCheck(
@@ -4447,7 +4488,7 @@ class Repository(CompletableGithubObject):
         assert isinstance(environment_name, str), environment_name
         environment_name = urllib.parse.quote(environment_name, safe="")
 
-        headers, data = self._requester.requestJsonAndCheck("DELETE", f"{self.url}/environments/{environment_name}")
+        self._requester.requestJsonAndCheck("DELETE", f"{self.url}/environments/{environment_name}")
 
     def get_dependabot_alerts(
         self,
@@ -4514,7 +4555,11 @@ class Repository(CompletableGithubObject):
         return github.DependabotAlert.DependabotAlert(self._requester, headers, data)
 
     def update_dependabot_alert(
-        self, number: int, state: str, dismissed_reason: Opt[str] = NotSet, dismissed_comment: Opt[str] = NotSet
+        self,
+        number: int,
+        state: str,
+        dismissed_reason: Opt[str] = NotSet,
+        dismissed_comment: Opt[str] = NotSet,
     ) -> DependabotAlert:
         """
         :calls: `PATCH /repos/{owner}/{repo}/dependabot/alerts/{alert_number} <https://docs.github.com/en/rest/dependabot/alerts#update-a-dependabot-alert>`_
@@ -4535,7 +4580,9 @@ class Repository(CompletableGithubObject):
                 "no_bandwidth",
                 "not_used",
                 "tolerable_risk",
-            ], "Dismissed reason can be one of ['fix_started', 'inaccurate', 'no_bandwidth', 'not_used', 'tolerable_risk']"
+            ], (
+                "Dismissed reason can be one of ['fix_started', 'inaccurate', 'no_bandwidth', 'not_used', 'tolerable_risk']"
+            )
         assert is_optional(dismissed_comment, str), dismissed_comment
         headers, data = self._requester.requestJsonAndCheck(
             "PATCH",
@@ -4588,7 +4635,7 @@ class Repository(CompletableGithubObject):
         :calls: `GET /repos/{owner}/{repo}/code-security-configuration <https://docs.github.com/en/rest/code-security/configurations?apiVersion=2022-11-28#get-the-code-security-configuration-associated-with-a-repository>`_
         :rtype: RepoCodeSecurityConfig | None
         """
-        #### TODO(napier): this is actually a special type not CodeSecurityConfig
+        # TODO(napier): this is actually a special type not CodeSecurityConfig
         headers, data = self._requester.requestJsonAndCheck("GET", f"{self.url}/code-security-configuration")
         if data is None:
             return None
