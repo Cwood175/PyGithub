@@ -213,8 +213,8 @@ class SecretScanAlert(NonCompletableGithubObject):
             self._push_protection_bypass_request_comment = self._makeStringAttribute(attributes["push_protection_bypass_request_comment"])
         if "push_protection_bypass_request_html_url" in attributes:
             self._push_protection_bypass_request_html_url = self._makeStringAttribute(attributes["push_protection_bypass_request_html_url"])
-        if "_push_protection_bypass_request_reviewer" in attributes:
-            self._push_protection_bypass_request_reviewer = self._makeClassAttribute(github.NamedUser.NamedUser, attributes["_push_protection_bypass_request_reviewer"])
+        if "push_protection_bypass_request_reviewer" in attributes:
+            self._push_protection_bypass_request_reviewer = self._makeClassAttribute(github.NamedUser.NamedUser, attributes["push_protection_bypass_request_reviewer"])
         if "push_protection_bypass_request_reviewer_comment" in attributes:
             self._push_protection_bypass_request_reviewer_comment = self._makeStringAttribute(attributes["push_protection_bypass_request_reviewer_comment"])
         if "resolution" in attributes:

@@ -505,6 +505,8 @@ class Repository(CompletableGithubObject):
         """
         self._completeIfNotSet(self._allow_squash_merge)
         return self._allow_squash_merge.value
+        self._completeIfNotSet(self._allow_squash_merge)
+        return self._allow_squash_merge.value
 
     @property
     def allow_update_branch(self) -> bool:
@@ -1252,7 +1254,11 @@ class Repository(CompletableGithubObject):
 
     @property
     def watchers_count(self) -> int:
+        """
+        :type: integer
+        """
         self._completeIfNotSet(self._watchers_count)
+        return self._watchers_count.value
         return self._watchers_count.value
 
     @property
@@ -4268,7 +4274,7 @@ class Repository(CompletableGithubObject):
                 "sort": sort,
                 "direction": direction,
                 "state": state,
-                "severity": severity
+                "severity": severity,
             }
         )
         return PaginatedList(
@@ -4277,7 +4283,7 @@ class Repository(CompletableGithubObject):
             f"{self.url}/code-scanning/alerts",
             url_parameters,
         )
-    
+
     def get_codescan_alert(self, number: int) -> CodeScanAlert:
         """
         :calls: `GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number} <https://docs.github.com/en/rest/code-scanning/code-scanning#get-a-code-scanning-alert>`_
@@ -4298,7 +4304,7 @@ class Repository(CompletableGithubObject):
         validity: Opt[str] = NotSet,
         is_publicly_leaked: Opt[bool] = NotSet,
         is_multi_repo: Opt[bool] = NotSet,
-        hide_secret: Opt[bool] = NotSet
+        hide_secret: Opt[bool] = NotSet,
     ) -> PaginatedList[SecretScanAlert]:
         """
         :calls: `GET /repos/{owner}/{repo}/secret-scanning/alerts <https://docs.github.com/en/rest/secret-scanning/secret-scanning#list-secret-scanning-alerts-for-a-repository>`_
@@ -4347,7 +4353,7 @@ class Repository(CompletableGithubObject):
             f"{self.url}/secret-scanning/alerts",
             url_parameters,
         )
-    
+
     def get_secret_scanning_alert(self, number: int, hide_secret: Opt[bool] = NotSet) -> SecretScanAlert:
         """
         :calls: `GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number} <https://docs.github.com/en/rest/secret-scanning/secret-scanning#get-a-secret-scanning-alert>`_
